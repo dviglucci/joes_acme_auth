@@ -1,10 +1,12 @@
+
 {
   "name": "acme_auth",
   "version": "1.0.0",
   "description": "",
   "main": "index.js",
   "scripts": {
-    "start:dev": "nodemon server"
+    "start:dev": "JWT=brogle nodemon server",
+    "other-start:dev": "nodemon server"
   },
   "keywords": [],
   "author": "",

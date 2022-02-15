@@ -16,9 +16,17 @@ const User = conn.define('user', {
     password: STRING
 });
 
-const secretSigningPhrase = process.env.AUTH_JWT_SECRET;
+const Note = conn.define('note', {
+    text: STRING,
+});
+
+Note.belongsTo(User);
+User.hasMany(Note);
+
+const secretSigningPhrase = process.env.JWT;
 
 User.byToken = async (token) => {
+    console.log('OUR PHRASE >>>', secretSigningPhrase)
     try {
         const unscrambledToken = jwt.verify(token, secretSigningPhrase);
         const user = await User.findByPk(unscrambledToken.userId);
@@ -73,11 +81,26 @@ const syncAndSeed = async () => {
     const [lucy, moe, larry] = await Promise.all(
         credentials.map(credential => User.create(credential))
     );
+    const seedNotes = [
+        { text: 'This is my first note' },
+        { text: 'My curtains are orange' },
+        { text: 'I have pets that are plants only' }
+    ];
+    const [note1, note2, note3] = await Promise.all(
+        seedNotes.map(note => Note.create(note))
+    );
+    await lucy.setNotes(note1);
+    await moe.setNotes([note2, note3]);
     return {
         users: {
             lucy,
             moe,
             larry
+        },
+        notes: {
+            note1,
+            note2,
+            note3
         }
     };
 };
@@ -85,6 +108,7 @@ const syncAndSeed = async () => {
 module.exports = {
     syncAndSeed,
     models: {
-        User
+        User,
+        Note
     }
 };

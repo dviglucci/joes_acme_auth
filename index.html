@@ -39,7 +39,7 @@
                 return (
                     <form onSubmit={onSubmit}>
                         <input value={username} onChange={onChange} name='username' />
-                        <input value={password} onChange={onChange} name='password' />
+                        <input type="password" value={password} onChange={onChange} name='password' />
                         <button>Sign In</button>
                     </form>
                 );
@@ -50,7 +50,8 @@
             constructor() {
                 super();
                 this.state = {
-                    auth: {}
+                    auth: {},
+                    notes: []
                 };
                 this.signIn = this.signIn.bind(this);
                 this.logout = this.logout.bind(this);
@@ -70,6 +71,9 @@
                             authorization: token
                         }
                     });
+                    
+                    const responseForNotes = await axios.get(`/api/users/${response.data.id}/notes`)
+                    console.log('Response for notes: ', responseForNotes.data)
                     this.setState({ auth: response.data });
                 }
             }
